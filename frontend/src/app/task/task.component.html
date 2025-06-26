@@ -1,0 +1,143 @@
+<div class="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
+   <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-semibold">Task List</h2>
+    <button
+      (click)="logout()"
+      class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200"
+    >
+      Logout
+    </button>
+  </div>
+    <h2 class="text-2xl font-semibold mb-4 text-center">Task List</h2>
+  
+  <!-- Add Task Form -->
+  <form (ngSubmit)="addTask()" class="mb-6 space-y-4">
+    <input
+      [(ngModel)]="newTask.title"
+      name="title"
+      placeholder="Task Title"
+      required
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+
+    <input
+      [(ngModel)]="newTask.description"
+      name="description"
+      placeholder="Description"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+
+    <select
+      [(ngModel)]="newTask.status"
+      name="status"
+      required
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="pending">Pending</option>
+      <option value="in_progress">In Progress</option>
+      <option value="completed">Completed</option>
+    </select>
+
+    <input
+      [(ngModel)]="newTask.due_date"
+      name="due_date"
+      type="date"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+
+    <button
+      type="submit"
+      class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
+    >
+      Add Task
+    </button>
+  </form>
+
+  <!-- Task List -->
+  <ul class="space-y-3">
+    <li
+      *ngFor="let task of tasks"
+      class="border border-gray-200 rounded-md p-3 shadow-sm"
+      [class.bg-gray-50]="editingTaskId === task.id"
+    >
+      <!-- View Mode -->
+      <div *ngIf="editingTaskId !== task.id" class="flex justify-between items-center">
+        <div>
+          <strong class="block text-lg">{{ task.title }}</strong>
+          <p class="text-gray-600">
+            Status: <span class="capitalize">{{ task.status.replace('_', ' ') }}</span> - Due:
+            {{ task.due_date || 'N/A' }}
+          </p>
+          <p *ngIf="task.description" class="text-gray-500 mt-1">{{ task.description }}</p>
+        </div>
+
+        <div class="flex space-x-2">
+          <button
+            (click)="editTask(task)"
+            class="px-3 py-1 text-sm bg-yellow-400 text-white rounded hover:bg-yellow-500"
+          >
+            Edit
+          </button>
+          <button
+            (click)="deleteTask(task.id)"
+            class="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- Edit Mode -->
+      <form *ngIf="editingTaskId === task.id" (ngSubmit)="saveEdit(task)" class="space-y-3">
+        <input
+          [(ngModel)]="task.title"
+          name="editTitle{{task.id}}"
+          placeholder="Task Title"
+          required
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <input
+          [(ngModel)]="task.description"
+          name="editDescription{{task.id}}"
+          placeholder="Description"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <select
+          [(ngModel)]="task.status"
+          name="editStatus{{task.id}}"
+          required
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="pending">Pending</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        <input
+          [(ngModel)]="task.due_date"
+          name="editDueDate{{task.id}}"
+          type="date"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <div class="flex space-x-2">
+          <button
+            type="submit"
+            class="flex-1 bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition duration-200"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            (click)="cancelEdit()"
+            class="flex-1 bg-gray-400 text-white py-2 rounded-md hover:bg-gray-500 transition duration-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </li>
+  </ul>
+</div>

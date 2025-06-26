@@ -10,7 +10,8 @@ class TaskController extends Controller
         return $request->user()->tasks()->latest()->get();
     }
 
-    public function store(Request $request) {
+   public function store(Request $request) {
+    try {
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -20,7 +21,15 @@ class TaskController extends Controller
 
         $task = $request->user()->tasks()->create($data);
         return response()->json($task, 201);
+
+    } catch (\Throwable $e) {
+        return response()->json([
+            'message' => 'Validation or server error',
+            'error' => $e->getMessage(),
+        ], 500);
     }
+}
+
 
     public function show(Task $task) {
         $this->authorize('view', $task);
